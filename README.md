@@ -9,6 +9,8 @@ EllipticCurve.py  has dependencies on the other files in this repository, except
 
 Other packages used are in the implementation are standard python packages: itertools, math, random, functools and operator.
 The gmpy2 package is also used to help speed up arithmetic. 
+Example.py contains a few example computations.
+To run this, copy/download the files to the same location. 
 
 The GUI.py file provides a basic gui to use the sea or schoof algorithm for point counting, where the user can specify the curve parameters p,A,B.
 The customTkinter and tkinter packages were used to create the gui.
