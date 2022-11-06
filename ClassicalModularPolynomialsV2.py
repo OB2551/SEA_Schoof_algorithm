@@ -1,10 +1,11 @@
-# import FiniteFieldZP
+
 import PolynomialsV2
 import json
 from gmpy2 import *
 
-
-# noinspection PyArgumentList
+#loads the lth classical modular polynomial modulo p from text file. Data in text file is stored as
+#(a,b) c representing the monomial c * x^a y^b
+#class has various methods to evaluate at specific values and partial derivatives
 class ModularPolynomial:
     def __init__(self, p, l):
         phi = open('ClassicalModularPolynomials/phi_j_' + str(l) + '.txt', 'r')
@@ -18,6 +19,7 @@ class ModularPolynomial:
             coefficient = mpz(data[1].split('\\')[0]) % self.p
             powers = [int(powers[0]), int(powers[1])]
             self.coefficients.append([powers, coefficient])
+        phi.close()
 
     def sub(self, x, y):
         z = 0
