@@ -8,7 +8,7 @@ import math
 
 class CanonicalModularPolynomial:
     def __init__(self, p, l):
-        phi = open("CanonicalModularPolynomials/Phi" + str(l) + ".txt", "r")
+        phi = open("ModularPolynomials/CanonicalModularPolynomials/Phi" + str(l) + ".txt", "r")
         self.coefficients = []
         self.l = l
         self.P = PolynomialsV2.polynomials_over(p)
