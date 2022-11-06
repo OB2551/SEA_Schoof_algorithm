@@ -3,6 +3,8 @@ from gmpy2 import *
 
 
 def gen_base_point(curve, a):
+    """returns a class Point for creating points and doring arithmetic  on an elliptic curve, where the point coordinates are 
+    quotients of polynomials"""
     class Point:
         def __init__(self, x, y, z=1):
             self.x = x
