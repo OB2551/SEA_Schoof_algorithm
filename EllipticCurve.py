@@ -1,27 +1,21 @@
 from PolynomialsV2 import *
-# from FiniteFieldZP import *
 from QuotientRingV2 import *
 from Euclidean import *
 from ClassicalModularPolynomialsV2 import *
 from PointPolynomialArithmeticV2 import *
 from CanonicalModularPolynomialsV2 import *
 from gmpy2.gmpy2 import mpz
-from sympy.ntheory import factorint
 from FracV2 import *
-import scipy.special
-import numpy as np
-import time
 import math
 import itertools
 import random as rand
-import timeit
-import gmpy2
 from gmpy2 import *
 
 primes_list = get_primes(1000)
 
 
 def point_factory(a, b, p):
+    '''returns a class that generates random points on the curve y^2=x^3+ax+b over the field F_p'''
     class CurvePoint:
         def __init__(self, *args):
             if not args:
@@ -87,7 +81,6 @@ def point_factory(a, b, p):
     return CurvePoint
 
 
-# noinspection PyArgumentList
 class EllipticCurve:
     def __init__(self, p1, a, b):
         p = mpz(p1)
@@ -96,7 +89,7 @@ class EllipticCurve:
         self.b = mpz(b) % p
         self.EC = self.P([self.b, self.a, mpz(0), mpz(1)])
         self.p = mpz(p)
-        if self.j_inv() % self.p == 0:
+        if self.discriminant == 0:
             print("Singular Curve")
 
     def j_inv(self):
@@ -105,8 +98,13 @@ class EllipticCurve:
         b = self.b
         j = 1728 * 4 * (a ** 3) * pow((4 * (a ** 3) + 27 * (b ** 2)), -1, self.p)
         return j % self.p
+    
+    def discriminant(self):
+        """compute discriminant of elliptic curve"""
+        return (4*(self.a**3)+27*(self.b**2))%self.p
 
     def division_poly(self, n):
+        """Compute up to the nth division polynomial required for Schoof algorithm"""
         a = self.a
         b = self.b
         y2 = self.P([b, a, 0, 1])
@@ -142,19 +140,22 @@ class EllipticCurve:
         return phi
 
     def odd_l_subroutine(self, phi, l):
-        """compute phi^2(P)-q(P) mod l, psi(l) in polynomial eqn
-           and find lambda s.t phi^2(P)-q(P) = lambda(P)"""
+        """compute the trace of Frobenius modulo l for odd primes l"""
         phi_l = phi[l]
+        #construct field of fractions of F_p[x]/<psi_l(x)> and a base point with 
+        #coordinates in the fraction field
         quotient = gen_quotient_ring(phi_l, self.P)
         ltor = gen_fraction_field(quotient)
         base = gen_base_point(self.EC, self.a)
         point = base(ltor.x, ltor.one)
+        
         q = self.p
         ql = q % l
         if ql > l // 2:
             ql = ql - l
-
         q1, q2 = point.frobenius(q ** 2), point.multiply_v2(ql)
+        
+        #catch edge case when x coordinates of q1,q2 are equal
         if q1.x == q2.x:
             w = modular_sqrt(ql, l)
             if w == 0:
@@ -170,11 +171,8 @@ class EllipticCurve:
                         return (2 * w) % l
 
         point_q = q1 + q2
-
         bound = int((l - 1) / 2)
-
         j = 1
-
         j_point = point.frobenius(q)
         adder = j_point
         while j <= bound:
@@ -182,7 +180,6 @@ class EllipticCurve:
                 break
             j += 1
             j_point += adder
-
         if j_point.y == point_q.y:
             return j
         if j_point.y == -point_q.y:
@@ -191,6 +188,7 @@ class EllipticCurve:
             print("fail")
 
     def a_mod2(self):
+        """determine the trace of Frobenius moduluo 2"""
         q = self.p
         gcd_mod2 = (self.P.x.powmod(q, self.EC) - self.P.x).gcd(self.EC)
         if gcd_mod2.deg() == 0:
@@ -198,22 +196,28 @@ class EllipticCurve:
         return 0
 
     def schoof(self):
+        """schoofs algorithm"""
+        #get primes required and division polynomials
         primes_list = primes(self.p)
         max_l = primes_list[-1]
         phi = self.division_poly(max_l)
+        
         c1, c2 = [], []
         x, y = self.a_mod2(), 2
         c1.append(x)
         c2.append(2)
+        
+        #determine trace modulo l
         for l in primes_list[1:]:
             x = self.odd_l_subroutine(phi, l)
             c1.append(x)
             c2.append(l)
-        print("Primes list l", c2)
-        print("t mod l", c1)
+            
+        #use chinese remainder theorem to recover trace
         a, modulus = crt(c1, c2)
         if a > 2 * math.sqrt(self.p):
             a = a - modulus
+            
         return "#E(F_p) = " + str(self.p + 1 - a)
 
     def eisensteins(self):
@@ -227,6 +231,7 @@ class EllipticCurve:
         return j_prime % self.p
 
     def prime_check(self, modular_polynomial):
+        """Check whether l is an Elkies or Atkin prime"""
         pol = (self.P.x.powmod(self.p, modular_polynomial) - self.P.x)
         divisor = pol.gcd(modular_polynomial)
         lead = divisor.coefficients[-1]
@@ -234,6 +239,7 @@ class EllipticCurve:
         return divisor
 
     def isogenous_curve(self, l, modular_polynomial, divisor):
+        """For an Elkies prime l, determine equaiton of an l-isogenous curve"""
         j = self.j_inv()
         q: mpz = self.p
         if divisor.deg() == 1:
@@ -251,6 +257,7 @@ class EllipticCurve:
         return j, j_prime, j_tilde, j_tilde_prime, a_tilde, b_tilde
 
     def elkies_procedure(self, l, phi_l, divisor):
+        """Elkies method to recover divisor f_l(x) of division polynomial psi_l(x)"""
         q = self.p
         j, j_prime, j_tilde, j_tilde_prime, a_tilde, b_tilde = self.isogenous_curve(l, phi_l, divisor)
         t1 = j_prime ** 2 * phi_l.partial_xx(j, j_tilde) % q
@@ -263,7 +270,8 @@ class EllipticCurve:
         t1 = pow(2, -1, q) * l * vii14 % q
         t2 = pow(4, -1, q) * l * ((e4 ** 2) * pow(e6, -1, q) - l * ((e4_ql ** 2) * pow(e6_ql, -1, q))) % q
         t3 = pow(3, -1, q) * l * (e6 * pow(e4, -1, q) - l * (e6_ql * pow(e4_ql, -1, q))) % q
-        '''coefficient of x^((l-1)/2-1)'''
+       
+        #coefficient of x^((l-1)/2-1)
         p1 = (t1 + t2 + t3) % q
         a_tilde = (l ** 4) * a_tilde % q
         b_tilde = (l ** 6) * b_tilde % q
@@ -273,11 +281,14 @@ class EllipticCurve:
         return self.P(coefficients)
 
     def elkies_procedure_v2(self, l, phi, divisor):
+        """Second version of method to recover divisor f_l(x) of lth division polynomial psi_l(x)
+        , this method is used for canonical modular polynomials"""
         q = self.p
         e_4 = -self.a * pow(3, -1, q) % q
         e_6 = -self.b * pow(2, -1, q) % q
         delta = (e_4 ** 3 - e_6 ** 2) * pow(1728, -1, q) % q
         j = self.j_inv()
+        
         if divisor.deg() == 1:
             g = -divisor.coefficients[0]
         else:
@@ -288,8 +299,8 @@ class EllipticCurve:
         dj = j * phi.partial_y(g, j) % q
         s = int(12 / math.gcd(l - 1, 12))
         delta_l = (g ** (int(12 / s))) * delta * pow(l ** 12, -1, q) % q
+        
         if dj == 0:
-            print("Dj==0")
             e4_l = e_4 * pow(l ** 2, -1, q) % q
             a_tilde = -3 * (l ** 4) * e4_l % q
             j_tilde = (e4_l ** 3) * pow(Delta_l, -1, q) % q
@@ -310,6 +321,7 @@ class EllipticCurve:
             e4_l = pow(l ** 2, -1, q) * (e_4 - e_2 * (
                         12 * e0_prime * pow(e_0, -1, q) + (6 * (e_4 ** 2) * pow(e_6, -1, q)) - (
                             4 * e_6 * pow(e_4, -1, q))) + e_2 ** 2) % q
+            
             j_tilde = (e4_l ** 3) * pow(delta_l, -1, q) % q
             f = (l ** s) * pow(g, -1, q)
             f_prime = s * e_2 * f * pow(12, -1, q) % q
@@ -320,12 +332,15 @@ class EllipticCurve:
             a_tilde = -3 * (l ** 4) * e4_l % q
             b_tilde = -2 * (l ** 6) * e6_l % q
             p1 = -l * e_2 % q
+            
         d = int((l - 1) / 2)
         ck, ck_tilde = self.weierstrass_coefficients(d, self.a, self.b, a_tilde, b_tilde)
         coefficients = self.kernel_poly_coefficients2(p1, d, ck, ck_tilde)
         return self.P(coefficients)
 
     def weierstrass_coefficients(self, d, a, b, a_tilde, b_tilde):
+        """compute weierstrass coefficients of the weierstrass p function for an elliptic curve E, 
+        and l-isogenous elliptic curve E' """
         q = self.p
         '''compute coefficients of weierstrass p function for E and E-tilde'''
         ck = [-a * pow(5, -1, q) % q, -b * pow(7, -1, q) % q]
@@ -339,7 +354,7 @@ class EllipticCurve:
         return ck, ck_tilde
 
     def kernel_poly_coefficients2(self, p1, d, ck, ck_tilde):
-        """Compute Coefficients for factor of division polynomial that
+        """Compute Coefficients for divisor of division polynomial that
             vanishes on eigenspace of the frobenius endomorphism"""
         ak = [-p1 * pow(2, -1, self.p)]
         ak = ak + [
@@ -384,6 +399,8 @@ class EllipticCurve:
             b = 1
         k = 0
         h = self.P.x
+        
+        #special edge cases where r can be determined easily
         if l in [37, 61, 73]:
             if ((h.powmod(self.p ** 2, phi)) - self.P.x).gcd(phi).deg() == l + 1:
                 return 2
@@ -392,6 +409,7 @@ class EllipticCurve:
                     return (l + 1) // 2
                 if b == -1:
                     return l + 1
+                
         for i in range(1, l + 2):
             if (l + 1) % i == 0 and ((-1) ** ((l + 1) // i) == b):
                 for c in range(1, i - k + 1):
@@ -412,7 +430,7 @@ class EllipticCurve:
         divs = divs[1:-1]
         while True:
             # find a generator of multiplicative group F_l^2
-            a = np.random.randint(0, l)
+            a = rand.randint(0, l)
             g = ql(pl([a, 1]))  # sqrt{d}-a
             t = 1
             for d in divs:
@@ -445,8 +463,8 @@ class EllipticCurve:
                 traces.append(-2 * x1 % l)
         return list(set(traces))
 
-    # noinspection PyUnboundLocalVariable,PyMethodMayBeStatic
     def atkin_traces(self, atkin, number_of_traces):
+        """split list of Atkin primes and their possible traces into two approximately equal sets"""
         l = len(atkin[0])
         i = 0
         traces_count = 0
@@ -475,6 +493,7 @@ class EllipticCurve:
         return t1, t2
 
     def baby_step_giant_step(self, elkies, atkin1, atkin2):
+        """Algorithm to find a match for trace after sorting possible trace values"""
         t3, m3 = crt(elkies[0], elkies[1])
         points = point_factory(self.a, self.b, self.p)
         traces1, traces2 = atkin1, atkin2
@@ -503,6 +522,8 @@ class EllipticCurve:
             r2.append(r)
             r2.append(r - m2)
         i = 1
+        #keep iterating unitl we find a match. we expect to find a match quickly, so if no match is found then something
+        #has gone wrong in the previous steps, so break out of loop after an arbitrary 40 iterations
         while i < 40:
             point = points()
             point_q = point.scalar(self.p + 1 - t3)
@@ -523,21 +544,25 @@ class EllipticCurve:
                 if r2_im1m3point.z != 0:
                     if r2_im1m3point.x % self.p in point_q_r1:
                         y_r_1_i, r_1_i = point_q_r1[r2_im1m3point.x]
+                        
                         if (y_r_1_i - r2_im1m3point.y) % self.p == 0:
                             t = t3 + m3 * (m2 * r_1_i + m1 * r2_i)
                             return t
+                        
                         else:
                             t = t3 + m3 * (m2 * r_1_i - m1 * r2_i)
                             return t
-                if r2_im1m3point.z % self.p == 0:
+                        
+                if r2_im1m3point.z == 0:
                     if "O" in point_q_r1:
                         r_1_i = point_q_r1["O"]
                         t = t3 + m3 * (m2 * r_1_i + m1 * r2_i)
                         return t
             i += 1
-        print("Failed at BSGS step")
+        print("Failed to find match at BSGS step")
 
     def sea(self, canonical=True, atkin_filter=True):
+        """SEA algorithm. Options availabl to filter Atkin primes and use canonical or classical moudlar polynomials"""
         x, y = self.a_mod2(), 2
         prod = 2
         e1 = [x]
@@ -551,18 +576,24 @@ class EllipticCurve:
         val = 4 * math.sqrt(self.p)
         while prod <= val:
             l = primes_list[counter]
+            
+            #load modular polynomimal
             if canonical and l <= 197:
                 phi_l = CanonicalModularPolynomial(self.p, l)
             else:
                 phi_l = ModularPolynomial(self.p, l)
+                
             j = self.j_inv()
             phi = phi_l.eval_at_y(j)
             divisor = self.prime_check(phi)
+            
+            #pathalogical Elkies prime, which we ignore
             if divisor.deg() == l + 1:
                 counter += 1
                 continue
-            if divisor.deg() == 0:
-                print( "Atkin",l)
+                
+            #Atkin prime    
+            if divisor.deg() == 0: 
                 if atkin_filter:
                     if l > 30 and (l != 73 or l != 61):
                         counter += 1
@@ -577,25 +608,33 @@ class EllipticCurve:
                 a2.append(l)
                 counter += 1
                 prod = l * prod
-
+                
+            #Elkies prime
             if divisor.deg() > 0:
-                print("Elkies",l)
                 elkies_count += 1
+                
+                #find divisor f_l(x) of division polynomial psi_l(x)
                 if canonical and l <= 197:
                     f_l = self.elkies_procedure_v2(l, phi_l, divisor)
                 else:
                     f_l = self.elkies_procedure(l, phi_l, divisor)
 
+                #generate fraction field of F_p[x]/<f_(x)> and base point on elliptic curve
+                #with coordinates in this fraction field
                 ltorring = gen_quotient_ring(f_l, self.P)
                 ltor = gen_fraction_field(ltorring)
                 base = gen_base_point(self.EC, self.a)
                 point = base(ltor.x, ltor.one)
                 frob_point = point.frobenius(self.p)
+                
+                
                 if divisor.deg() == 2:
                     bound = (l - 1) // 2
                     j = 1
                     point_j = point
                     light = 0
+                    
+                    #find eigenvalue of frobenius endomorphism
                     while j <= bound:
                         if (point_j.x - frob_point.x).num.polynomial.gcd(f_l).deg() > 0:
                             light = 1
@@ -612,6 +651,8 @@ class EllipticCurve:
                     else:
                         t = (-j + self.p * pow(-j, l - 2, l)) % l
                         print("t mod l", t)
+                        
+                #catch edge case
                 else:
                     w = modular_sqrt(self.p, l)
                     wp = point.multiply(w)
@@ -627,28 +668,38 @@ class EllipticCurve:
                 e2.append(l)
                 counter += 1
                 prod = l * prod
+                
         elkies = e1, e2
+        
+        #if no atkin primes used
         if not a1:
             t, m = crt(e1, e2)
             if abs(t) > 2 * math.sqrt(self.p):
                 return "E(F_p)=" + str(self.p + 1 - (t - m))
             return "E(F_p)=" + str(self.p + 1 - t)
+        
+        #otherwise use match sort algorithm to find trace t
         atkin = a1, a2
         atkin1, atkin2 = self.atkin_traces(atkin, number_of_traces)
         #print("atkinok")
         t = self.baby_step_giant_step(elkies, atkin1, atkin2)
+        
         return "#E(F_p) = " + str(self.p + 1 - t)
 
-        # noinspection PyUnreachableCode
-
+    
+    
     def baby_step(self):
-        # noinspection PyTypeChecker
+        """baby step giant step algorithm to compute the number of points on the curve 
+        by finding divisors of #E(F_p)"""
+        
         m = rand.randint(math.floor(math.sqrt(math.sqrt(self.p))), math.ceil(math.sqrt(math.sqrt(self.p)) + 10))
         points = point_factory(self.a, self.b, self.p)
         l = 1
         thresh = 4 * math.sqrt(self.p)
+        
         while l < thresh:
             point = points()
+            #find the order of the random point by a baby step giant step collision algorithm
             j_ps = [(point.scalar(j), j) for j in range(0, m + 1)]
             j_psx = [point[0].x for point in j_ps]
             j_psy = [(point[0].y, point[1]) for point in j_ps]
@@ -657,6 +708,7 @@ class EllipticCurve:
             two_m_point = point.scalar(2 * m)
             k = 0
             order = 0
+            
             while k < self.p + 2 * math.sqrt(self.p):
                 z = point_q.add(two_m_point.scalar(k))
                 if z.x in dic.keys():
@@ -667,19 +719,24 @@ class EllipticCurve:
                     order = self.p + 1 + (2 * m * k) - j
                     break
                 k += 1
+                
             if order == 0:
                 continue
             primes = prime_factors(order)
             for prime in primes:
                 if point.scalar(order // prime).z % self.p == 0:
                     order = order // prime
+                    
             l = (order * l) // math.gcd(order, l)
 
+        #once l is large enough there will be only one value in this interval with n%l == 0
         for n in range(int(self.p + 1 - 2 * math.sqrt(self.p)), int(self.p + 1 + 2 * math.sqrt(self.p))):
             if n % l == 0:
                 return "#E(F_p) = " + str(n)
 
+            
     def find_point(self, divs):
+        """finds a point of maximal prime order given a sorted list of prime divisors of #E(F_p)"""
         points = point_factory(self.a, self.b, self.p)
         while True:
             indicator = 0
