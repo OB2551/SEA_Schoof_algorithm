@@ -2,8 +2,10 @@ import PolynomialsV2
 from gmpy2 import *
 import math
 
+#given p, l, loads the lth Canonical modular polynomial from stored text file and reduces modulo p. 
+#the text files contain data as a triple a,b,c which represents the monomial in x and y:  c*x^a y^b
+#various methods below evaluate the polynomial at partial derivatives.
 
-# noinspection PyArgumentList
 class CanonicalModularPolynomial:
     def __init__(self, p, l):
         phi = open("CanonicalModularPolynomials/Phi" + str(l) + ".txt", "r")
@@ -17,6 +19,7 @@ class CanonicalModularPolynomial:
             pow_y = int(data[1])
             coefficient = mpz(data[2]) % self.p
             self.coefficients.append([pow_x, pow_y, coefficient])
+        close("CanonicalModularPolynomials/Phi" + str(l) + ".txt", "r")
 
     def evaluate(self, x, y):
         z = 0
