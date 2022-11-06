@@ -2,6 +2,9 @@ from Euclidean import *
 
 
 def gen_quotient_ring(modulus, ring):
+    """returns a Quotient ring class  a polynomial ring modulo the specified modulus, ie something of the form Z[x]/<f(x)>.
+    Operators overloaded."""
+    
     class QuotientRing:
         def __init__(self, polynomial):
             self.polynomial = polynomial % modulus
