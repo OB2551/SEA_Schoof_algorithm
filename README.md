@@ -7,7 +7,7 @@ An EllipticCurve object has the methods schoof() and sea() to count the number o
 
 EllipticCurve.py  has dependencies on the other files in this repository, except for the GUI.py and .png file.
 
-Other packages used are in the implementation are sandard python packages: itertools, math, random, functools and operator.
+Other packages used are in the implementation are standard python packages: itertools, math, random, functools and operator.
 The gmpy2 package is also used to help speed up arithmetic. 
 
 The GUI.py file provides a basic gui to use the sea or schoof algorithm for point counting, where the user can specify the curve parameters p,A,B.
