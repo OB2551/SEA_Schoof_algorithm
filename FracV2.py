@@ -2,6 +2,8 @@ from QuotientRingV2 import *
 
 
 def gen_fraction_field(quotient):
+    """generates a fraction field class given a quotient ring class. Stores fractions as a pair (a,b)
+    where a is the numerator and b the denominator"""
     class Fraction:
         def __init__(self, num, dem=None):
             self.num = num
