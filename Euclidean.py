@@ -5,9 +5,9 @@ from functools import reduce
 import operator
 import gmpy2
 import random as rand
-import time
 
 
+#file of various utility functions and operators on euclidean rings
 def prod(iterable):
     return reduce(operator.mul, iterable, 1)
 
