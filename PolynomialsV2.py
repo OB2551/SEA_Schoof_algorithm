@@ -10,7 +10,7 @@ import math
 
 
 def polynomials_over(modulus):
-    # noinspection PyTypeChecker
+   """returns a class polynomial with whose objects are polynomials with integer coefficients modulo the specified modulus. Operators have been overloaded for easier writing"""
     class Polynomial:
         def __init__(self, coefficients):
             self.coefficients = [coefficient % modulus for coefficient in coefficients]
