@@ -680,7 +680,7 @@ class EllipticCurve:
         #otherwise use match sort algorithm to find trace t
         atkin = a1, a2
         atkin1, atkin2 = self.atkin_traces(atkin, number_of_traces)
-        #print("atkinok")
+      
         t = self.baby_step_giant_step(elkies, atkin1, atkin2)
         
         return "#E(F_p) = " + str(self.p + 1 - t)
