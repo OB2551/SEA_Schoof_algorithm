@@ -1,4 +1,4 @@
-# EllipticCurves
+# Elliptic Curves
 
 This code is an implementation of the Schoof and SEA algorithm for counting points on elliptic curves over finite fields. 
 
