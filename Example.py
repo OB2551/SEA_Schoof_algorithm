@@ -24,4 +24,4 @@ print("128-bit example with SEA: ", order)
 #SEA:  #E(F_p) = 201
 #Schoof:  #E(F_p) = 201
 #Baby-step giant-step:  #E(F_p) = 201
-#128-bit example with SEA:  #E(F_p) = 340282366920938463470648655491441425069
+#128-bit example with SEA:  #E(F_p) = 340282366920938463470648655491441425069 (Compute time ~5 seconds)
