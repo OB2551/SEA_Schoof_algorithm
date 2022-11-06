@@ -8,7 +8,7 @@ from gmpy2 import *
 #class has various methods to evaluate at specific values and partial derivatives
 class ModularPolynomial:
     def __init__(self, p, l):
-        phi = open('ClassicalModularPolynomials/phi_j_' + str(l) + '.txt', 'r')
+        phi = open('Modular_Polynomials/ClassicalModularPolynomials/phi_j_' + str(l) + '.txt', 'r')
         self.coefficients = []
         self.l = l
         self.P = PolynomialsV2.polynomials_over(p)
