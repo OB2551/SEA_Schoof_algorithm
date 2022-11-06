@@ -602,7 +602,6 @@ class EllipticCurve:
                 atkin_count += 1
                 r = self.frobenius_order(l, phi)
                 traces = self.atkin(l, r)
-                print("Possible traces mod l", traces)
                 number_of_traces += len(traces)
                 a1.append(traces)
                 a2.append(l)
@@ -647,10 +646,10 @@ class EllipticCurve:
                         continue
                     if (point_j.y - frob_point.y).num.polynomial.gcd(f_l).deg() > 0:
                         t = (j + self.p * pow(j, l - 2, l)) % l
-                        print("t mod l", t)
+                       
                     else:
                         t = (-j + self.p * pow(-j, l - 2, l)) % l
-                        print("t mod l", t)
+                        
                         
                 #catch edge case
                 else:
@@ -658,11 +657,11 @@ class EllipticCurve:
                     wp = point.multiply(w)
                     if (wp.y - frob_point.y).num.polynomial.gcd(f_l).deg() > 0:
                         t = (2 * w % l)
-                        print(" t mod l",   t)
+                        
                     else:
 
                         t = (-2 * w % l)
-                        print(" t mod l", t)
+                      
 
                 e1.append(t)
                 e2.append(l)
