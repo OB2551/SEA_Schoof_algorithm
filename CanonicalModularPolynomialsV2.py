@@ -19,7 +19,7 @@ class CanonicalModularPolynomial:
             pow_y = int(data[1])
             coefficient = mpz(data[2]) % self.p
             self.coefficients.append([pow_x, pow_y, coefficient])
-        close("CanonicalModularPolynomials/Phi" + str(l) + ".txt", "r")
+        phi.close()
 
     def evaluate(self, x, y):
         z = 0
