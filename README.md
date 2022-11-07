@@ -16,7 +16,7 @@ The GUI.py file provides a basic gui to use the SEA or Schoof algorithm for poin
 customtkinter and tkinter need to be installed for GUI.py to run.
 Alternatively it can be downloaded as a standalone application here:
 
-https://file.io/CRsqJYctm0vU
+https://mega.nz/file/cOkDgDrR#lAYadQmzGVZ37QnMRGM8sJx3LPKPXLuYv4Ecs4e6SUk
 
 The large file size is largely due to text files for precomputed modular polynomials, which have enormous coefficients.
 The application opens with the terminal window, as it is possible there are bugs that I am unaware of. The SEA algorithm is intended for large primes - for very small primes or very rare edge cases it can potentially fail.
