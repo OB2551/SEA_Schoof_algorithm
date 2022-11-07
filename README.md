@@ -1,6 +1,6 @@
 # Elliptic Curves
 
-This code is an implementation of the Schoof and SEA algorithm for counting points on elliptic curves over finite fields. Python was chosen for ease of implementation at the cost of performance. SEA starts slowing down past 128-bit primes.
+This code is an implementation of the Schoof and SEA algorithm for counting points on elliptic curves over finite fields. Python was chosen for ease of implementation at the cost of performance. SEA starts slowing significantly down past 128-bit primes. Anything larger than 32 bits for Schoof and the Baby-step giant-step algorithm is very slow and generally infeasible.
 
 EllipticCurve.py  contains an EllipticCurve class which requires a prime p, and integers A and B to initialise an instance of the class. 
 An EllipticCurve object has the methods schoof() and sea() to count the number of points on the elliptic curve ![Untitled3](https://user-images.githubusercontent.com/67613774/200216559-d157c584-0b8c-45fa-8f9f-dea281c6dd05.png)
@@ -20,6 +20,8 @@ https://file.io/CRsqJYctm0vU
 
 The large file size is largely due to text files for precomputed modular polynomials, which have enormous coefficients.
 The application opens with the terminal window, as it is possible there are bugs that I am unaware of. The SEA algorithm is intended for large primes - for very small primes or very rare edge cases it can potentially fail.
+
+While using large curves, the app window may change to "Not repsonding" while the computation is still runnning.
 
 ![Untitled2](https://user-images.githubusercontent.com/67613774/200215308-df3f9062-c35b-41a2-a2cf-74ab13810e4e.png)
 
