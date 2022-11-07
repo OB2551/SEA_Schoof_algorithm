@@ -14,7 +14,7 @@ Example.py contains a few example computations.
 
 The GUI.py file provides a basic gui to use the SEA or Schoof algorithm for point counting, where the user can specify the curve parameters p,A,B.
 customtkinter and tkinter need to be installed for GUI.py to run.
-Alternatively it can be downloaded as a standalone application here:
+Alternatively it can be downloaded as a stand alone application here:
 
 https://mega.nz/file/cOkDgDrR#lAYadQmzGVZ37QnMRGM8sJx3LPKPXLuYv4Ecs4e6SUk
 
