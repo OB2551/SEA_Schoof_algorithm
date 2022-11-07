@@ -18,7 +18,7 @@ Alternatively it can be downloaded as a stand alone application here:
 
 https://mega.nz/file/cOkDgDrR#lAYadQmzGVZ37QnMRGM8sJx3LPKPXLuYv4Ecs4e6SUk
 
-A folder named GUI-Copy will be installed in your chosen location. To run the app, open GUI-copy and then open the GUI.exe file.
+A folder named GUI-Copy will be installed in your chosen location. To run the app, open GUI-Copy and then open the GUI.exe file.
 
 The large file size is largely due to text files for precomputed modular polynomials, which have enormous coefficients.
 The application opens with the terminal window, as it is possible there are bugs that I am unaware of
