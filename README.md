@@ -11,7 +11,7 @@ Other packages used are in the implementation are standard python packages: iter
 The gmpy2 package is also used to help speed up arithmetic and will need to be installed.
 Example.py contains a few example computations.
 
-The GUI.py file provides a basic gui to use the sea or schoof algorithm for point counting, where the user can specify the curve parameters p,A,B.
+The GUI.py file provides a basic gui to use the SEA or Schoof algorithm for point counting, where the user can specify the curve parameters p,A,B.
 customtkinter and tkinter need to be installed for GUI.py to run.
 ![Untitled2](https://user-images.githubusercontent.com/67613774/200215308-df3f9062-c35b-41a2-a2cf-74ab13810e4e.png)
 
