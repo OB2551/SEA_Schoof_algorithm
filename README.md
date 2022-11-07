@@ -14,6 +14,13 @@ Example.py contains a few example computations.
 
 The GUI.py file provides a basic gui to use the SEA or Schoof algorithm for point counting, where the user can specify the curve parameters p,A,B.
 customtkinter and tkinter need to be installed for GUI.py to run.
+Alternatively it can be downloaded as a standalone application here:
+
+https://file.io/CRsqJYctm0vU
+
+The large file size is largely due to text files for precomputed modular polynomials, which have enormous coefficients.
+The application opens with the terminal window, as it is possible there are bugs that I am unaware of. The SEA algorithm is intended for large primes - for very small primes or very rare edge cases it can potentially fail.
+
 ![Untitled2](https://user-images.githubusercontent.com/67613774/200215308-df3f9062-c35b-41a2-a2cf-74ab13810e4e.png)
 
 ![Untitled](https://user-images.githubusercontent.com/67613774/200215314-c0a96679-cd48-4821-910c-4c162d25ce79.png)
