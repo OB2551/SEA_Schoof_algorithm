@@ -10,12 +10,12 @@ EllipticCurve.py  has dependencies on the other files in this repository, except
 Other packages used are in the implementation are standard python packages: itertools, math, random, functools and operator.
 The gmpy2 package is also used to help speed up arithmetic and will need to be installed.
 Example.py contains a few example computations.
-![Untitled2](https://user-images.githubusercontent.com/67613774/200215308-df3f9062-c35b-41a2-a2cf-74ab13810e4e.png)
-
-![Untitled](https://user-images.githubusercontent.com/67613774/200215314-c0a96679-cd48-4821-910c-4c162d25ce79.png)
 
 The GUI.py file provides a basic gui to use the sea or schoof algorithm for point counting, where the user can specify the curve parameters p,A,B.
 customtkinter and tkinter need to be installed for GUI.py to run.
+![Untitled2](https://user-images.githubusercontent.com/67613774/200215308-df3f9062-c35b-41a2-a2cf-74ab13810e4e.png)
+
+![Untitled](https://user-images.githubusercontent.com/67613774/200215314-c0a96679-cd48-4821-910c-4c162d25ce79.png)
 
 
 Point counting is of interest in elliptic curve cryptography.
