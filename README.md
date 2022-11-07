@@ -15,6 +15,7 @@ Example.py contains a few example computations.
 The GUI.py file provides a basic gui to use the sea or schoof algorithm for point counting, where the user can specify the curve parameters p,A,B.
 customtkinter and tkinter need to be installed for GUI.py to run.
 
+
 Point counting is of interest in elliptic curve cryptography.
 For an introduction to point counting on elliptic curves, see for example:
 https://en.wikipedia.org/wiki/Counting_points_on_elliptic_curves
