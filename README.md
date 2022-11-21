@@ -1,6 +1,6 @@
 # Elliptic Curves
 
-This code is an implementation of the Schoof and SEA algorithm for counting points on elliptic curves over finite fields. Python was chosen for ease of implementation at the cost of performance. SEA starts slowing significantly down past 128-bit primes. Anything larger than 32 bits for Schoof and the Baby-step giant-step algorithm is very slow and generally infeasible.
+This code is an implementation of the Schoof and SEA algorithm for counting points on elliptic curves over finite fields. Python was chosen for ease of implementation at the cost of performance. The SEA implementation starts slowing significantly down past 128-bit primes. Anything larger than 32 bits for Schoof and the Baby-step giant-step algorithm is very slow and generally infeasible.
 
 EllipticCurve.py  contains an EllipticCurve class which requires a prime p, and integers A and B to initialise an instance of the class. 
 An EllipticCurve object has the methods schoof() and sea() to count the number of points on the elliptic curve ![Untitled3](https://user-images.githubusercontent.com/67613774/200216559-d157c584-0b8c-45fa-8f9f-dea281c6dd05.png)
