@@ -6,9 +6,7 @@ EllipticCurve.py  contains an EllipticCurve class which requires a prime p, and 
 An EllipticCurve object has the methods schoof() and sea() to count the number of points on the elliptic curve ![Untitled3](https://user-images.githubusercontent.com/67613774/200216559-d157c584-0b8c-45fa-8f9f-dea281c6dd05.png)
 
 
-EllipticCurve.py  has dependencies on the other files in this repository, except for the GUI.py and .png file.
-
-Other packages used are in the implementation are standard python packages: itertools, math, random, functools and operator.
+Packages used in the implementation are standard python packages: itertools, math, random, functools and operator.
 The gmpy2 package is also used to help speed up arithmetic and will need to be installed.
 Example.py contains a few example computations.
 
